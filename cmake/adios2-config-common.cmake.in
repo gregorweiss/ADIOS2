@@ -132,6 +132,11 @@ if(NOT @BUILD_SHARED_LIBS@)
     find_dependency(HDF5 COMPONENTS C)
   endif()
 
+  set(ADIOS2_HAVE_BigWhoop @ADIOS2_HAVE_BigWhoop@)
+  if(ADIOS2_HAVE_BigWhoop)
+    find_dependency(BigWhoop)
+  endif()
+
   set(ADIOS2_HAVE_Sodium @ADIOS2_HAVE_Sodium@)
   if(ADIOS2_HAVE_Sodium)
     find_dependency(Sodium)

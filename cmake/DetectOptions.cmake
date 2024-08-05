@@ -545,6 +545,12 @@ if(ADIOS2_USE_Endian_Reverse STREQUAL ON)
   set(ADIOS2_HAVE_Endian_Reverse TRUE)
 endif()
 
+# BigWhoop for BigWhoopOperator
+find_package(BWC CONFIG)
+if(BWC_FOUND)
+  set(ADIOS2_HAVE_BigWhoop TRUE)
+endif()
+
 # Sodium for EncryptionOperator
 if(ADIOS2_USE_Sodium STREQUAL AUTO)
   find_package(Sodium)
