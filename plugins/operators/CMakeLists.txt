@@ -17,3 +17,15 @@ if(ADIOS2_HAVE_Sodium)
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT adios2_core-development
 )
 endif()
+
+if(ADIOS2_HAVE_BigWhoop)
+  add_library(BigWhoopOperator MODULE
+    BigWhoopOperator.cpp
+  )
+  target_link_libraries(BigWhoopOperator adios2_core bwc::bwclib)
+  install(TARGETS BigWhoopOperator  EXPORT adios2Exports
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT adios2_core-runtime
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT adios2_core-libraries NAMELINK_COMPONENT adios2_core-development
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT adios2_core-development
+)
+endif()
