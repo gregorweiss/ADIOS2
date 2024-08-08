@@ -66,17 +66,17 @@ size_t BigWhoopOperator::Operate(const char *dataIn, const Dims &blockStart, con
                                  const DataType type, char *bufferOut)
 {
     // offset for writing into bufferOut
-    size_t bufferOutOffset = 0;
+    size_t offset = 0;
 
     const size_t ndims = blockCount.size();
 
     // bwc metadata
-    PutParameter(bufferOut, bufferOutOffset, ndims);
-    for (const auto &d : blockCount)
+    PutParameter(bufferOut, offset, ndims);
+    for (const size_t &d : blockCount)
     {
-        PutParameter(bufferOut, bufferOutOffset, d);
+        PutParameter(bufferOut, offset, d);
     }
-    PutParameter(bufferOut, bufferOutOffset, type);
+    PutParameter(bufferOut, offset, type);
 
     Dims convertedDims = ConvertBwcDims(blockCount, type, 5, true, 1);
 
@@ -89,7 +89,7 @@ size_t BigWhoopOperator::Operate(const char *dataIn, const Dims &blockStart, con
     rate = hasRate ? itRate->second : rate;
 
     bwc_stream *stream =
-        bwc_init_stream(const_cast<char *>(dataIn), bufferOut + bufferOutOffset, comp);
+        bwc_init_stream(const_cast<char *>(dataIn), bufferOut + offset, comp);
     bwc_create_compression(coder, stream, const_cast<char *>(rate.data()));
     size_t sizeOut = (size_t)bwc_compress(coder, stream);
 
@@ -116,30 +116,30 @@ size_t BigWhoopOperator::Operate(const char *dataIn, const Dims &blockStart, con
                                           "BigWhoop failed, compressed buffer size is 0");
     }
 
-    bufferOutOffset += sizeOut;
+    offset += sizeOut;
 
     bwc_free_codec(coder);
 
-    return bufferOutOffset;
+    return offset;
 }
 
 size_t BigWhoopOperator::InverseOperate(const char *bufferIn, const size_t sizeIn, char *dataOut)
 {
-    size_t bufferInOffset = 0;
+    size_t offset = 0;
 
-    const size_t ndims = GetParameter<size_t>(bufferIn, bufferInOffset);
+    const size_t ndims = GetParameter<size_t>(bufferIn, offset);
     Dims blockCount(ndims);
     for (size_t i = 0; i < ndims; ++i)
     {
-        blockCount[i] = GetParameter<size_t>(bufferIn, bufferInOffset);
+        blockCount[i] = GetParameter<size_t>(bufferIn, offset);
     }
-    const DataType type = GetParameter<DataType>(bufferIn, bufferInOffset);
+    const DataType type = GetParameter<DataType>(bufferIn, offset);
 
     Dims convertedDims = ConvertBwcDims(blockCount, type, 5, true, 1);
 
     bwc_codec *decoder = bwc_alloc_decoder();
     bwc_stream *stream =
-        bwc_init_stream(const_cast<char *>(bufferIn) + bufferInOffset, dataOut, decomp);
+        bwc_init_stream(const_cast<char *>(bufferIn) + offset, dataOut, decomp);
     bwc_create_decompression(decoder, stream, 0);
     bwc_decompress(decoder, stream);
 
