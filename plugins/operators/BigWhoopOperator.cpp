@@ -148,7 +148,14 @@ size_t BigWhoopOperator::InverseOperate(const char *bufferIn, const size_t sizeI
     return helper::GetTotalSize(convertedDims, helper::GetDataTypeSize(type));
 }
 
-bool BigWhoopOperator::IsDataTypeValid(const DataType type) const { return true; }
+bool BigWhoopOperator::IsDataTypeValid(const DataType type) const
+{
+    if (type == DataType::Float || type == DataType::Double)
+    {
+        return true;
+    }
+    return false;
+}
 
 size_t BigWhoopOperator::GetEstimatedSize(const size_t ElemCount, const size_t ElemSize,
                                           const size_t ndims, const size_t *dims) const
