@@ -161,7 +161,11 @@ size_t BigWhoopOperator::GetEstimatedSize(const size_t ElemCount, const size_t E
                                           const size_t ndims, const size_t *dims) const
 {
     size_t sizeIn = ElemCount * ElemSize;
-    return sizeIn;
+    return (sizeof(size_t)           // ndims
+            + sizeof(size_t) * ndims // count
+            + sizeof(DataType)       // type
+            + sizeIn                 // data
+    );
 }
 
 Dims ConvertBwcDims(const Dims &dimensions, const DataType type, const size_t targetDims,
